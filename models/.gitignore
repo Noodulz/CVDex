@@ -1,0 +1,6 @@
+.venv
+.direnv
+.env
+data/
+
+
