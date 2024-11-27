@@ -1,6 +1,6 @@
 .venv
 .direnv
 .env
-data/
+dataset/
 
 
