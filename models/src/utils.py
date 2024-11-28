@@ -5,13 +5,19 @@ from torch.utils.data import DataLoader, random_split
 
 def data_loader(path, width, height):
     transform = transforms.Compose([
+        transforms.Lambda(lambda img: img.convert("RGB") if img.mode != "RGB" else img),
         transforms.Resize((width, height)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.25, 0.25, 0.25])
     ])
 
     dataset = datasets.ImageFolder(root=path, transform=transform)
+    return dataset
 
+def get_labels(dataset):
+    return dataset.classes
+
+def dataset_distribution(dataset):
     train_size = int(0.7 * len(dataset))
     val_size = int(0.15 * len(dataset))
     test_size = len(dataset) - train_size - val_size
