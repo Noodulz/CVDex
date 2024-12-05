@@ -7,3 +7,5 @@ torchvision
 scikit-learn
 kaggle
 kagglehub
+flask
+pillow
