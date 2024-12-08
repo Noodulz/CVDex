@@ -30,7 +30,7 @@ A Pokédex clone made in Flutter and Dart where users can scan Pokémon images i
 # How to Run
 
 ## Prerequisites
-Android Studio (>= Ladybug version), Android emulators, Gradle, latest Flutter version, Java JDK 17 or higher (21 recommended)
+Android SDK (>= 34), Android Studio (>= Ladybug version 2024.2), Android emulators, Gradle, latest Flutter version (>= 3.24.5), Java JDK 17 or higher (21 recommended)
 
 ## Building for Android
 Before every build and testing every change, run `flutter clean` before `flutter pub get` and then `flutter build apk`. After the APK is built, launch an emulator of your choice by checking `flutter emulators` and then `flutter emulators --launch <emulator id>`. After the emulator is launched, install the APK into the emulator with `adb install build/app/outputs/flutter-apk/app-release.apk`. Then once that's done the app can be launched automatically with `adb shell monkey -p com.example.cvdex 1`.
