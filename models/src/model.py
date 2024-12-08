@@ -97,4 +97,3 @@ def evaluate(model, data):
             correct += (pred == label).sum().item()
 
     print(f"Accuracy: {100 * correct / total :.2f}%")
-
