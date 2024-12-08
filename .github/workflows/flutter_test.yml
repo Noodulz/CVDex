@@ -34,22 +34,11 @@ jobs:
       # Step 4: Run Code Formatter (dart format)
       - name: Format Code
         run: dart format .
-      
-      # Step 5: Commit Code Formatting Changes
-      - name: Commit Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Auto-format code via GitHub Actions" || echo "No changes to commit"
-          git push origin ${{ github.head_ref }} --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 6: Run Linter (dart analyze)
+      # Step 5: Run Linter (dart analyze)
       - name: Lint Code
         run: flutter analyze || echo "Linting issues found"
 
-      # Step 7: Run Tests
+      # Step 6: Run Tests
       - name: Run Tests
         run: flutter test
