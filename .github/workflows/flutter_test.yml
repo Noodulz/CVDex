@@ -43,6 +43,8 @@ jobs:
           git add .
           git commit -m "Auto-format code via GitHub Actions" || echo "No changes to commit"
           git push origin HEAD:${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Step 6: Run Linter (dart analyze)
       - name: Lint Code
