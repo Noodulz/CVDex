@@ -2,7 +2,7 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:camera/camera.dart';
-import 'camera.dart';
+import 'imagepick.dart';
 
 class HomeScreen extends StatefulWidget {
     const HomeScreen({super.key});
@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final List<Widget> _pages = [
         Center(child:Text("Home Page")),
-        CameraScreen(),
+        CameraPage(),
         Center(child:Text("Leaderboard Page")),
         ProfileScreen(
             appBar: AppBar(
