@@ -45,11 +45,13 @@ ios/Pods/
 ios/Runner.xcworkspace/
 ios/DerivedData/
 ios/.dart_tool/
+ios/*
 
 # macOS specific files
 macos/Flutter/ephemeral/
 macos/.dart_tool/
 macos/DerivedData/
+macos/*
 
 # Android specific files
 android/.gradle/
@@ -59,17 +61,21 @@ android/.dart_tool/
 android/app/proguard-rules.pro
 android/app/proguard-rules-backup.pro
 android/build/
+android/*
 
 # Web specific files
 web/.dart_tool/
 web/build/
+web/*
 
 # Linux specific files
 linux/flutter/ephemeral/
+linux/*
 
 # Windows specific files
 windows/flutter/ephemeral/
 windows/.dart_tool/
+windows/*
 
 # VS Code settings
 .vscode/
@@ -109,3 +115,9 @@ generated_plugin_registrant.dart
 google-services.json
 GoogleService-Info.plist
 
+# Nixos required files
+bin/*
+test/*
+.metadata
+.venv/*
+.direnv/*
