@@ -1,8 +1,14 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.cvdex">
+
+    <uses-sdk tools:overrideLibrary="io.flutter.plugins.firebase.auth" />
     <application
-        android:label="flutter_test_app"
+        android:label="cvdex"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+s
         <activity
             android:name=".MainActivity"
             android:exported="true"
