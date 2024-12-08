@@ -35,7 +35,6 @@ in pkgs.mkShell{
     clang-tools
     llvm.libstdcxxClang
     llvm.libcxx
-    ta-lib
   ];
 
   postVenvCreation = ''
