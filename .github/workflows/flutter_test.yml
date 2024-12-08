@@ -16,13 +16,14 @@ jobs:
     steps:
       # Step 1: Checkout the repository
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Step 2: Set up Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2.18.0
         with:
-          flutter-version: stable
+          channel: stable
+          flutter-version-file: pubspec.yaml
 
       # Step 3: Install Dependencies
       - name: Install Dependencies
