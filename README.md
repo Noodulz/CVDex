@@ -19,9 +19,6 @@
   <a href="https://developer.android.com/studio" target="_blank">
     <img src="https://img.shields.io/badge/android%20studio-346ac1?style=for-the-badge&logo=android%20studio&logoColor=white" alt="Android Studio">
   </a>
-  <a href="https://developer.apple.com/ios/" target="_blank">
-    <img src="https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
-  </a>
 </div>
 
 
