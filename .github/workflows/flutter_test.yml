@@ -31,7 +31,7 @@ jobs:
 
       # Step 4: Run Code Formatter (dart format)
       - name: Format Code
-        run: flutter format .
+        run: dart format .
       
       # Step 5: Commit Code Formatting Changes
       - name: Commit Changes
