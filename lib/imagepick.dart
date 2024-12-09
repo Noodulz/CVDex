@@ -7,8 +7,8 @@ import 'dart:io';
 import 'dart:convert';
 
 class ServerData {
-  final label;
-  final confidence;
+  final String label;
+  final double confidence;
 
   ServerData({required this.label, required this.confidence});
 
@@ -43,12 +43,27 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
+      if (photo != null) {
+        setState(() {
+          _image = photo;
+        });
+
+        await _imageToServer(photo);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   void _confirmImageMessage(ServerData data) {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("Is this a ${data.label}"),
+            title: Text("Is this a ${data.label}?"),
             content: _image != null
                 ? Image.file(
                     File(_image!.path),
@@ -122,21 +137,37 @@ class _CameraPageState extends State<CameraPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Camera Example')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _image == null
+      appBar: AppBar(title: Text('Camera')),
+      body: Stack(
+        children: [
+          Center(
+            child: _image == null
                 ? Text('No image selected.')
                 : Image.file(File(_image!.path), height: 300, width: 300),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _takePicture,
-              child: Text('Take a Picture'),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  FloatingActionButton(
+                    onPressed: _pickImageFromGallery,
+                    heroTag: 'gallery',
+                    child: Icon(Icons.photo_library),
+                  ),
+                  FloatingActionButton(
+                    onPressed: _takePicture,
+                    heroTag: 'camera',
+                    child: Icon(Icons.camera_alt),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
