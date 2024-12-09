@@ -36,7 +36,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   void dispose() {
-    _controller?.dispose(); // Dispose of the controller when the widget is disposed
+    _controller
+        ?.dispose(); // Dispose of the controller when the widget is disposed
     super.dispose();
   }
 
@@ -93,7 +94,8 @@ class _CameraScreenState extends State<CameraScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DisplayPictureScreen(imagePath: image.path),
+                  builder: (context) =>
+                      DisplayPictureScreen(imagePath: image.path),
                 ),
               );
             }
@@ -107,7 +109,6 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 }
 
-
 class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
 
@@ -118,7 +119,7 @@ class DisplayPictureScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('Captured Image')),
       body: Center(
-        child: Image.file(File(imagePath)),
+        child: Image.network(imagePath),
       ),
     );
   }

@@ -65,8 +65,8 @@ class _CameraPageState extends State<CameraPage> {
           return AlertDialog(
             title: Text("Is this a ${data.label}?"),
             content: _image != null
-                ? Image.file(
-                    File(_image!.path),
+                ? Image.network(
+                    _image!.path,
                     width: 300,
                     height: 300,
                     fit: BoxFit.cover,
@@ -143,7 +143,7 @@ class _CameraPageState extends State<CameraPage> {
           Center(
             child: _image == null
                 ? Text('No image selected.')
-                : Image.file(File(_image!.path), height: 300, width: 300),
+                : Image.network(_image!.path, height: 300, width: 300),
           ),
           Align(
             alignment: Alignment.bottomCenter,
