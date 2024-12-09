@@ -24,6 +24,26 @@ class CameraPage extends StatefulWidget {
   _CameraPageState createState() => _CameraPageState();
 }
 
+class PokemonDetails {
+  final String name;
+  final String type;
+  final double height;
+  final double weight;
+  final Map<String, int> stats;
+  final String imageUrl;
+  final String description; // New property
+
+  PokemonDetails({
+    required this.name,
+    required this.type,
+    required this.height,
+    required this.weight,
+    required this.stats,
+    required this.imageUrl,
+    required this.description, // Initialize the new property
+  });
+}
+
 class _CameraPageState extends State<CameraPage> {
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
@@ -76,38 +96,238 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  void _showPokemonDetails(PokemonDetails details) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            constraints: BoxConstraints(
+                maxWidth: 400, maxHeight: 700), // Limit dimensions
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.shade100,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Column(
+                    children: [
+                      Image.network(
+                        details.imageUrl,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(height: 8.0),
+                      Text(
+                        details.name.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, // Change font color to black
+                        ),
+                      ),
+                      Text(
+                        'Type: ${details.type}',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.black, // Change font color to black
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildInfoTile('Height', '${details.height} m'),
+                    SizedBox(width: 16.0),
+                    _buildInfoTile('Weight', '${details.weight} kg'),
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.shade50,
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Text(
+                    details.description,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color:
+                          Colors.black, // Adjust text color for better contrast
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Stats:',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black, // Change font color to black
+                      ),
+                    ),
+                    ...details.stats.entries.map((entry) {
+                      return _buildStatRow(
+                          entry.key.toUpperCase(), entry.value);
+                    }).toList(),
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close dialog
+                  },
+                  child: Text(
+                    'Close',
+                    style: TextStyle(color: Colors.purple),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Helper to build individual info tiles (e.g., Height, Weight)
+  Widget _buildInfoTile(String title, String value) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.purple.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.purple.shade300, width: 1),
+      ),
+      padding: EdgeInsets.all(8),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.purple),
+          ),
+          Text(value, style: TextStyle(fontSize: 14, color: Colors.black)),
+        ],
+      ),
+    );
+  }
+
+  // Helper to build individual stat rows
+  Widget _buildStatRow(String statName, int statValue) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          statName.toUpperCase(),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          "$statValue",
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+        ),
+      ],
+    );
+  }
+
   void _confirmImageMessage(ServerData data) {
     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Is this a ${data.label}?"),
-            content: _image != null
-                ? Image.network(
-                    _image!.path,
-                    width: 300,
-                    height: 300,
-                    fit: BoxFit.cover,
-                  )
-                : Text('No image captured.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Close dialog
-                  _takePicture(); // Retake picture
-                },
-                child: Text('Retake'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Close dialog
-                  _proceedWithImage(data.label); // Proceed with current image
-                },
-                child: Text('Confirm'),
-              ),
-            ],
-          );
-        });
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Is this a ${data.label}?"),
+          content: _image != null
+              ? Image.network(
+                  _image!.path,
+                  width: 300,
+                  height: 300,
+                  fit: BoxFit.cover,
+                )
+              : Text('No image captured.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                _takePicture(); // Retake picture
+              },
+              child: Text('Retake'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Close dialog
+                await _fetchPokemonDetails(data.label.toLowerCase());
+              },
+              child: Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _fetchPokemonDetails(String pokemonName) async {
+    try {
+      final uri = Uri.parse('https://pokeapi.co/api/v2/pokemon/$pokemonName');
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // Fetch species for description
+        final speciesUrl = data['species']['url'];
+        final speciesResponse = await http.get(Uri.parse(speciesUrl));
+
+        String description = "Description not available.";
+        if (speciesResponse.statusCode == 200) {
+          final speciesData = jsonDecode(speciesResponse.body);
+          description = speciesData['flavor_text_entries']
+              .firstWhere(
+                (entry) => entry['language']['name'] == 'en',
+                orElse: () => {"flavor_text": "No description available."},
+              )['flavor_text']
+              .replaceAll('\n', ' ')
+              .replaceAll('\f', ' ');
+        }
+
+        final PokemonDetails details = PokemonDetails(
+          name: data['name'],
+          type: data['types'][0]['type']['name'],
+          height: data['height'] / 10, // Convert decimeters to meters
+          weight: data['weight'] / 10, // Convert hectograms to kg
+          stats: {
+            for (var stat in data['stats'])
+              stat['stat']['name']: stat['base_stat'],
+          },
+          imageUrl: data['sprites']['front_default'], // Sprite URL
+          description: description, // Add description
+        );
+
+        _showPokemonDetails(details);
+      } else {
+        throw Exception("Failed to fetch Pokémon details");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 
   void _showPokedexPopup(Map<String, dynamic> pokemonData) {
