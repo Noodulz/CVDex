@@ -273,6 +273,9 @@ class _CameraPageState extends State<CameraPage> {
               onPressed: () async {
                 Navigator.pop(context); // Close dialog
                 await _fetchPokemonDetails(data.label.toLowerCase());
+
+                // Show the confidence score dialog after Pokédex dialog
+                _showConfidenceScoreDialog(data.confidence);
               },
               child: Text('Confirm'),
             ),
@@ -290,6 +293,10 @@ class _CameraPageState extends State<CameraPage> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
+        final animatedSprite = data['sprites']['versions']['generation-v']
+            ['black-white']['animated']['front_default'];
+        final defaultSprite = data['sprites']['front_default'];
+
         // Fetch species for description
         final speciesUrl = data['species']['url'];
         final speciesResponse = await http.get(Uri.parse(speciesUrl));
@@ -306,20 +313,27 @@ class _CameraPageState extends State<CameraPage> {
               .replaceAll('\f', ' ');
         }
 
-        final PokemonDetails details = PokemonDetails(
-          name: data['name'],
-          type: data['types'][0]['type']['name'],
-          height: data['height'] / 10, // Convert decimeters to meters
-          weight: data['weight'] / 10, // Convert hectograms to kg
-          stats: {
-            for (var stat in data['stats'])
-              stat['stat']['name']: stat['base_stat'],
-          },
-          imageUrl: data['sprites']['front_default'], // Sprite URL
-          description: description, // Add description
-        );
+        // Update state with Pokémon details
+        setState(() {
+          final PokemonDetails details = PokemonDetails(
+            name: data['name'],
+            type: data['types'][0]['type']['name'],
+            height: data['height'] / 10, // Convert decimeters to meters
+            weight: data['weight'] / 10, // Convert hectograms to kg
+            stats: {
+              for (var stat in data['stats'])
+                stat['stat']['name']: stat['base_stat'],
+            },
+            imageUrl: animatedSprite ?? defaultSprite,
+            description: description,
+          );
 
-        _showPokemonDetails(details);
+          // Show Pokédex dialog
+          _showPokemonDetails(details);
+          final confidenceValue =
+              double.tryParse(details.stats['confidence']?.toString() ?? '0') ??
+                  0.0;
+        });
       } else {
         throw Exception("Failed to fetch Pokémon details");
       }
@@ -328,6 +342,42 @@ class _CameraPageState extends State<CameraPage> {
         SnackBar(content: Text('Error: $e')),
       );
     }
+  }
+
+  void _showConfidenceScoreDialog(double confidenceScore) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          title: Text(
+            'How Good?',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Your discovery scored: ${(confidenceScore).toStringAsFixed(2)}%!',
+                style: TextStyle(fontSize: 18, color: Colors.black),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16.0),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+              },
+              child: Text('OK', style: TextStyle(color: Colors.purple)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showPokedexPopup(Map<String, dynamic> pokemonData) {
