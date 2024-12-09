@@ -6,16 +6,16 @@ import 'package:mime/mime.dart';
 import 'dart:io';
 import 'dart:convert';
 
-void main() {
-  runApp(MyApp());
-}
+class ServerData {
+  final label;
+  final confidence;
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: CameraPage(),
-    );
+  ServerData({required this.label, required this.confidence});
+
+  factory ServerData.fromJson(Map<String, dynamic> data) {
+    final label = data['label'];
+    final confidence = data['confidence'];
+    return ServerData(label: label, confidence: confidence);
   }
 }
 
@@ -26,14 +26,14 @@ class CameraPage extends StatefulWidget {
 
 class _CameraPageState extends State<CameraPage> {
   final ImagePicker _picker = ImagePicker();
-  File? _image;
+  XFile? _image;
 
   Future<void> _takePicture() async {
     try {
       final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
       if (photo != null) {
         setState(() {
-          _image = File(photo.path);
+          _image = photo;
         });
 
         await _imageToServer(photo);
@@ -41,6 +41,46 @@ class _CameraPageState extends State<CameraPage> {
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  void _confirmImageMessage(ServerData data) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Is this a ${data.label}"),
+            content: _image != null
+                ? Image.file(
+                    File(_image!.path),
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.cover,
+                  )
+                : Text('No image captured.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                  _takePicture(); // Retake picture
+                },
+                child: Text('Retake'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                  _proceedWithImage(); // Proceed with current image
+                },
+                child: Text('Confirm'),
+              ),
+            ],
+          );
+        });
+  }
+
+  void _proceedWithImage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Image confirmed!')),
+    );
   }
 
   Future<void> _imageToServer(XFile image) async {
@@ -66,7 +106,11 @@ class _CameraPageState extends State<CameraPage> {
       if (response.statusCode == 200) {
         print('Image successfully uploaded!');
         final responseData = await response.stream.bytesToString();
-        print('Server Response: $responseData');
+        final parsedData = jsonDecode(responseData);
+        final ServerData serverData = ServerData.fromJson(parsedData);
+
+        print('Server Response: ${serverData.label} : $serverData');
+        _confirmImageMessage(serverData);
       } else {
         print('Failed to upload image: ${response.statusCode}');
       }
@@ -75,65 +119,24 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
-  Future<void> _pickImageFromGallery() async {
-    try {
-      final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
-      if (photo != null) {
-        setState(() {
-          _image = File(photo.path);
-        });
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Camera Page'),
-      ),
-      body: Stack(
-        children: [
-          // Center the image or placeholder text
-          Center(
-            child: _image == null
-                ? Text(
-                    'Upload from your gallery or snap a photo!',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  )
-                : Image.network(_image!.path),
-          ),
-
-          // Position buttons at the bottom center
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(bottom: 20.0), // Adjust bottom margin
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Gallery Button
-                  FloatingActionButton(
-                    onPressed: _pickImageFromGallery,
-                    heroTag: 'galleryButton',
-                    child: Icon(Icons.photo_library),
-                  ),
-                  SizedBox(width: 20), // Spacing between buttons
-
-                  // Camera Button
-                  FloatingActionButton(
-                    onPressed: _takePicture,
-                    heroTag: 'cameraButton',
-                    child: Icon(Icons.camera),
-                  ),
-                ],
-              ),
+      appBar: AppBar(title: Text('Camera Example')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _image == null
+                ? Text('No image selected.')
+                : Image.file(File(_image!.path), height: 300, width: 300),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _takePicture,
+              child: Text('Take a Picture'),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
