@@ -26,14 +26,14 @@ class CameraPage extends StatefulWidget {
 
 class _CameraPageState extends State<CameraPage> {
   final ImagePicker _picker = ImagePicker();
-  File? _image;
+  XFile? _image;
 
   Future<void> _takePicture() async {
     try {
       final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
       if (photo != null) {
         setState(() {
-          _image = File(photo.path);
+          _image = photo;
         });
 
         await _imageToServer(photo);
@@ -51,7 +51,7 @@ class _CameraPageState extends State<CameraPage> {
             title: Text("Is this a ${data.label}"),
             content: _image != null
                 ? Image.file(
-                    _image!,
+                    File(_image!.path),
                     width: 300,
                     height: 300,
                     fit: BoxFit.cover,
@@ -129,7 +129,7 @@ class _CameraPageState extends State<CameraPage> {
           children: [
             _image == null
                 ? Text('No image selected.')
-                : Image.file(_image!, height: 300, width: 300),
+                : Image.file(File(_image!.path), height: 300, width: 300),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _takePicture,
