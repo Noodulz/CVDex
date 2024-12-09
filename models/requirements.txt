@@ -8,4 +8,5 @@ scikit-learn
 kaggle
 kagglehub
 flask
+flask-cors
 pillow

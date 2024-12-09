@@ -6,8 +6,10 @@ from torchvision import transforms, datasets, models
 from PIL import Image
 import io
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 class PokeModel(nn.Module):
     def __init__(self, num_labels) -> None:
