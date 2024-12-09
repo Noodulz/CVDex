@@ -18,6 +18,11 @@
 
 > **CVDEX is a Flutter-based Pokédex app that lets users scan Pokémon images in real life, leveraging a PyTorch model, Firebase integration, and a clean UI inspired by the original Pokédex. Users can build their digital Pokédex while enjoying a gamified experience.**
 
+<div align="center" id="demo">
+  <img src="https://github.com/Noodulz/CVDex/blob/main/assets/dragonite-demo.gif" alt="Dragonite" width=232 height=480 style="margin-right: 20px;">
+  <img src="https://github.com/Noodulz/CVDex/blob/main/assets/vaporeon-demo.gif" alt="Vaporeon" style="margin-left:20px;">
+</div>
+
 # How to Run
 
 ## Prerequisites
