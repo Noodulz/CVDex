@@ -28,6 +28,24 @@ class _CameraPageState extends State<CameraPage> {
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
 
+  Future<Map<String, dynamic>?> fetchPokemonData(String pokemonName) async {
+    final url = Uri.parse(
+        'https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}');
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        print('Error: Pokémon not found');
+        return null; // Handle not found Pokémon
+      }
+    } catch (e) {
+      print('Error fetching Pokémon data: $e');
+      return null;
+    }
+  }
+
   Future<void> _takePicture() async {
     try {
       final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
@@ -83,7 +101,7 @@ class _CameraPageState extends State<CameraPage> {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context); // Close dialog
-                  _proceedWithImage(); // Proceed with current image
+                  _proceedWithImage(data.label); // Proceed with current image
                 },
                 child: Text('Confirm'),
               ),
@@ -92,10 +110,76 @@ class _CameraPageState extends State<CameraPage> {
         });
   }
 
-  void _proceedWithImage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Image confirmed!')),
+  void _showPokedexPopup(Map<String, dynamic> pokemonData) {
+    final imageUrl = pokemonData['sprites']['front_default'] ?? '';
+    final name = pokemonData['name'];
+    final height = pokemonData['height'] / 10; // Convert to meters
+    final weight = pokemonData['weight'] / 10; // Convert to kilograms
+    final types = (pokemonData['types'] as List)
+        .map((typeInfo) => typeInfo['type']['name'])
+        .join(', ');
+    final stats = (pokemonData['stats'] as List)
+        .map((stat) => "${stat['stat']['name']}: ${stat['base_stat']}")
+        .join('\n');
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Pokémon Image
+              if (imageUrl.isNotEmpty)
+                Image.network(imageUrl, height: 150, fit: BoxFit.cover),
+              SizedBox(height: 10),
+
+              // Pokémon Name
+              Text(
+                name.toUpperCase(),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+
+              // Pokémon Details
+              Text('Type: $types', style: TextStyle(fontSize: 16)),
+              Text('Height: ${height.toStringAsFixed(1)} m',
+                  style: TextStyle(fontSize: 16)),
+              Text('Weight: ${weight.toStringAsFixed(1)} kg',
+                  style: TextStyle(fontSize: 16)),
+              SizedBox(height: 10),
+
+              // Pokémon Stats
+              Text(
+                'Stats:\n$stats',
+                style: TextStyle(fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
     );
+  }
+
+  void _proceedWithImage(String pokemonName) async {
+    final pokemonData = await fetchPokemonData(pokemonName);
+
+    if (pokemonData != null) {
+      _showPokedexPopup(pokemonData);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Pokémon not found in PokéAPI')),
+      );
+    }
   }
 
   Future<void> _imageToServer(XFile image) async {

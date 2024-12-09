@@ -35,7 +35,7 @@ num_labels = len(dataset.classes)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 lmodel = PokeModel(num_labels=num_labels)
-lmodel.load_state_dict(torch.load("PokemonModel.pth", weights_only=True))
+lmodel.load_state_dict(torch.load("../PokemonModel.pth", weights_only=True, map_location=device))
 lmodel.to(device)
 
 print(dataset.classes)
@@ -58,8 +58,8 @@ def predict():
 
         label = dataset.classes[pred.item()]
         confidence_percent = confidence.item() * 100
-
-        return jsonify({"label": label, "confidence": f"{confidence_percent:.3f}"}), 200
+        print(f"I think this is {label} with a score of {confidence_percent}")
+        return jsonify({"label": label, "confidence": round(confidence_percent, 3)}), 200
 
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
