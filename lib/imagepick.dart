@@ -253,14 +253,21 @@ class _CameraPageState extends State<CameraPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Is this a ${data.label}?"),
+          title: Text("${data.label} detected!"),
           content: _image != null
-              ? Image.network(
-                  _image!.path,
-                  width: 300,
-                  height: 300,
-                  fit: BoxFit.cover,
-                )
+              ? (kIsWeb
+                  ? Image.network(
+                      _image!.path, // Web uses network-like URLs
+                      width: 300,
+                      height: 300,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.file(
+                      File(_image!.path), // Android/iOS uses local files
+                      width: 300,
+                      height: 300,
+                      fit: BoxFit.cover,
+                    ))
               : Text('No image captured.'),
           actions: [
             TextButton(
