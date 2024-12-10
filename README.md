@@ -23,7 +23,7 @@
   <img src="https://github.com/Noodulz/CVDex/blob/main/assets/vaporeon-demo.gif" alt="Vaporeon" style="margin-left:20px;">
 </div>
 
-# How to Run
+# How to Contribute
 
 ## Prerequisites
 Android SDK (>= 34), Android Studio (>= Ladybug version 2024.2), Android emulators, Python 3 (>= 3.6), PyTorch 2.x, Gradle, latest Flutter version (>= 3.24.5), Java JDK 17 or higher (21 recommended)
