@@ -19,7 +19,7 @@
 > **CVDEX is a Flutter-based Pokédex app that lets users scan Pokémon images in real life, leveraging a PyTorch model, Firebase integration, and a clean UI inspired by the original Pokédex. Users can build their digital Pokédex while enjoying a gamified experience.**
 
 <div align="center" id="demo">
-  <img src="https://github.com/Noodulz/CVDex/blob/main/assets/dragonite-demo.gif" alt="Dragonite" width=232 height=480 style="margin-right: 20px;">
+  <img src="https://github.com/Noodulz/CVDex/blob/main/assets/pidgey-demo.gif" alt="Pidgey" width=232 height=480 style="margin-right: 20px;">
   <img src="https://github.com/Noodulz/CVDex/blob/main/assets/vaporeon-demo.gif" alt="Vaporeon" style="margin-left:20px;">
 </div>
 
@@ -27,6 +27,9 @@
 
 ## Prerequisites
 Android SDK (>= 34), Android Studio (>= Ladybug version 2024.2), Android emulators, Python 3 (>= 3.6), PyTorch 2.x, Gradle, latest Flutter version (>= 3.24.5), Java JDK 17 or higher (21 recommended)
+
+## Starting the Server
+To run the PyTorch model server, navigate to `models/`, install all dependencies with `pip install -r requirements.txt`, and then run `python3 src/server.py` which loads the model from Kaggle on a Flask server ready for handling requests. 
 
 ## Building for Android
 Before every build and testing every change, run `flutter clean` before `flutter pub get` and then `flutter build apk`. After the APK is built, launch an emulator of your choice by checking `flutter emulators` and then `flutter emulators --launch <emulator id>`. After the emulator is launched, install the APK into the emulator with `adb install build/app/outputs/flutter-apk/app-release.apk`. Then once that's done the app can be launched automatically with `adb shell monkey -p com.example.cvdex 1`.
