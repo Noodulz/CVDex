@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 
 class ServerData {
@@ -452,12 +453,27 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  String getBaseUrl() {
+    if (kIsWeb) {
+      return 'http://127.0.0.1:5000'; // Web uses localhost
+    } else if (Platform.isAndroid) {
+      return 'http://10.0.2.2:5000'; // Android emulator uses 10.0.2.2
+    } else if (Platform.isIOS) {
+      return 'http://127.0.0.1:5000'; // iOS simulator uses localhost
+    } else {
+      return 'http://192.168.10.0:5000'; // Replace with local network IP for physical devices
+    }
+  }
+
   Future<void> _imageToServer(XFile image) async {
     try {
       final bytes = await image.readAsBytes();
       final mimeType = lookupMimeType(image.path) ?? 'application/octet-stream';
       // Prepare the multipart request
-      final uri = Uri.parse('http://localhost:5000/predict');
+      final baseUrl = getBaseUrl();
+      final uri = Uri.parse('$baseUrl/predict');
+
+      // Prepare the multipart request
       final request = http.MultipartRequest('POST', uri);
 
       // Add the image as a file to the multipart request
